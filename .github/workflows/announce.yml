@@ -1,0 +1,51 @@
+name: Steam announcements
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Print the Discord payload for the latest post of each game without sending
+        type: boolean
+        default: false
+
+concurrency:
+  group: announce
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+      DISCORD_WEBHOOK_SAVESYNC: ${{ secrets.DISCORD_WEBHOOK_SAVESYNC }}
+      DISCORD_WEBHOOK_SERVERSYNC: ${{ secrets.DISCORD_WEBHOOK_SERVERSYNC }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Dry run
+        if: ${{ inputs.dry_run }}
+        run: node announce.mjs --dry-run
+
+      - name: Post new announcements
+        if: ${{ !inputs.dry_run }}
+        run: node announce.mjs
+
+      - name: Commit posted.json
+        if: ${{ always() && !inputs.dry_run }}
+        run: |
+          git add posted.json
+          git diff --cached --quiet && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "Record posted announcements"
+          git push -q
