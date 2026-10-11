@@ -3,14 +3,19 @@
     "appId": "3832010",
     "name": "SaveSync",
     "rss": "https://store.steampowered.com/feeds/news/app/3832010/?cc=IN&l=english",
-    "webhookEnv": "DISCORD_WEBHOOK_SAVESYNC",
-    "color": 6734068
+    "color": 6734068,
+    "targets": [
+      { "channel": "savesync-announcements", "webhookEnv": "DISCORD_WEBHOOK_SAVESYNC_ANNOUNCEMENTS", "ping": "@everyone" }
+    ]
   },
   {
     "appId": "4862380",
     "name": "ServerSync",
     "rss": "https://store.steampowered.com/feeds/news/app/4862380/?cc=IN&l=english",
-    "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC",
-    "color": 6734068
+    "color": 6734068,
+    "targets": [
+      { "channel": "serversync-announcements", "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC_ANNOUNCEMENTS", "ping": "@everyone" },
+      { "channel": "savesync-server-serversync-wip", "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC_WIP", "ping": "@everyone" }
+    ]
   }
 ]

@@ -66,10 +66,10 @@ function excerpt(markdown) {
   return `${cut.trimEnd()}…`;
 }
 
-function buildPayload(feed, item) {
+function buildPayload(feed, target, item) {
   return {
-    content: "@everyone",
-    allowed_mentions: { parse: ["everyone"] },
+    content: target.ping ?? "",
+    allowed_mentions: { parse: target.ping ? ["everyone", "roles"] : [] },
     username: feed.name,
     ...(feed.avatar ? { avatar_url: feed.avatar } : {}),
     embeds: [
@@ -137,44 +137,53 @@ for (const feed of feeds) {
 
   if (DRY_RUN) {
     const latest = items.at(-1);
-    console.log(`${feed.name}: ${items.length} items, latest payload:`);
-    if (latest) console.log(JSON.stringify(buildPayload(feed, latest), null, 2));
-    continue;
-  }
-
-  if (!state[feed.appId]) {
-    state[feed.appId] = items.map((i) => record(i, null));
-    await saveState(state);
-    console.log(`${feed.name}: first run, recorded ${items.length} existing posts without posting`);
-    continue;
-  }
-
-  const seen = new Set(state[feed.appId].map((r) => r.guid));
-  const fresh = items.filter((i) => !seen.has(i.guid));
-  if (!fresh.length) {
-    console.log(`${feed.name}: nothing new`);
-    continue;
-  }
-
-  const webhook = process.env[feed.webhookEnv] || process.env.DISCORD_WEBHOOK_URL;
-  if (!webhook) {
-    console.error(`${feed.name}: ${feed.webhookEnv} is not set`);
-    failed = true;
-    continue;
-  }
-
-  for (const item of fresh) {
-    try {
-      await post(webhook, buildPayload(feed, item));
-    } catch (err) {
-      console.error(`${feed.name}: failed to post "${item.title}": ${err.message}`);
-      failed = true;
-      break;
+    for (const target of feed.targets) {
+      console.log(`${target.channel}: ${items.length} items, latest payload:`);
+      if (latest) console.log(JSON.stringify(buildPayload(feed, target, latest), null, 2));
     }
-    state[feed.appId].push(record(item, new Date().toISOString()));
-    await saveState(state);
-    console.log(`${feed.name}: posted "${item.title}"`);
+    continue;
+  }
+
+  for (const target of feed.targets) {
+    if (!(await announce(feed, target, items))) failed = true;
   }
 }
 
 if (failed) process.exitCode = 1;
+
+async function announce(feed, target, items) {
+  const key = target.channel;
+
+  if (!state[key]) {
+    state[key] = items.map((i) => record(i, null));
+    await saveState(state);
+    console.log(`${key}: first run, recorded ${items.length} existing posts without posting`);
+    return true;
+  }
+
+  const seen = new Set(state[key].map((r) => r.guid));
+  const fresh = items.filter((i) => !seen.has(i.guid));
+  if (!fresh.length) {
+    console.log(`${key}: nothing new`);
+    return true;
+  }
+
+  const webhook = process.env[target.webhookEnv];
+  if (!webhook) {
+    console.error(`${key}: ${target.webhookEnv} is not set`);
+    return false;
+  }
+
+  for (const item of fresh) {
+    try {
+      await post(webhook, buildPayload(feed, target, item));
+    } catch (err) {
+      console.error(`${key}: failed to post "${item.title}": ${err.message}`);
+      return false;
+    }
+    state[key].push(record(item, new Date().toISOString()));
+    await saveState(state);
+    console.log(`${key}: posted "${item.title}"`);
+  }
+  return true;
+}

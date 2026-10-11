@@ -1,5 +1,5 @@
 {
-  "3832010": [
+  "savesync-announcements": [
     {
       "guid": "https://store.steampowered.com/news/app/3832010/view/703278488775296435",
       "title": "Medieval Dynasty Support",
@@ -61,7 +61,33 @@
       "postedAt": null
     }
   ],
-  "4862380": [
+  "serversync-announcements": [
+    {
+      "guid": "https://store.steampowered.com/news/app/4862380/view/680761758839734313",
+      "title": "ServerSync Closed Beta",
+      "published": "2026-09-16T03:57:16.000Z",
+      "postedAt": null
+    },
+    {
+      "guid": "https://store.steampowered.com/news/app/4862380/view/712288224875119871",
+      "title": "Update: Public Lobbies, Custom Port Lobbies & Bans",
+      "published": "2026-10-02T17:03:32.000Z",
+      "postedAt": null
+    },
+    {
+      "guid": "https://store.steampowered.com/news/app/4862380/view/712288224875120536",
+      "title": "Update: Project Zomboid, Dragonwilds, LAN Discovery & Lobby Fixes",
+      "published": "2026-10-04T11:21:27.000Z",
+      "postedAt": null
+    },
+    {
+      "guid": "https://store.steampowered.com/news/app/4862380/view/712288224875120637",
+      "title": "Update: Palworld Local Saves, Typing Fix & Backup Indicator",
+      "published": "2026-10-05T11:49:18.000Z",
+      "postedAt": null
+    }
+  ],
+  "savesync-server-serversync-wip": [
     {
       "guid": "https://store.steampowered.com/news/app/4862380/view/680761758839734313",
       "title": "ServerSync Closed Beta",
