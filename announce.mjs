@@ -68,7 +68,7 @@ function excerpt(markdown) {
 
 function buildPayload(feed, target, item) {
   return {
-    content: target.ping ?? "",
+    content: [target.ping, target.note].filter(Boolean).join(" "),
     allowed_mentions: { parse: target.ping ? ["everyone", "roles"] : [] },
     username: feed.name,
     ...(feed.avatar ? { avatar_url: feed.avatar } : {}),

@@ -15,7 +15,7 @@
     "color": 6734068,
     "targets": [
       { "channel": "serversync-announcements", "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC_ANNOUNCEMENTS", "ping": "@everyone" },
-      { "channel": "savesync-server-serversync-wip", "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC_WIP", "ping": "@everyone" }
+      { "channel": "savesync-server-serversync-wip", "webhookEnv": "DISCORD_WEBHOOK_SERVERSYNC_WIP", "ping": "@everyone", "note": "New ServerSync update. Join the ServerSync server: https://discord.gg/INVITE_CODE" }
     ]
   }
 ]
